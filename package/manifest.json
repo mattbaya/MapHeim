@@ -1,0 +1,10 @@
+{
+  "name": "MapHeim",
+  "author": "Svaha",
+  "version_number": "0.1.0",
+  "website_url": "https://github.com/mattbaya/MapHeim",
+  "description": "Better corner map: inside a dungeon it draws a plan of the walls you've seen, growing as you explore. Zoom it in and out. A trail of fading dots shows where you've been for the last 90 seconds.",
+  "dependencies": [
+    "denikson-BepInExPack_Valheim-5.4.2351"
+  ]
+}
