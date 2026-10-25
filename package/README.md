@@ -1,12 +1,15 @@
 # MapHeim
 
-**Three upgrades for the little map in the corner: a plan of the dungeon you're in, zoom, and a trail showing where you've just been.**
+**Upgrades for your map: a plan of the dungeon you're in, zoom, a trail of where you've just been, a GPS with arrival time, pins that add themselves, and cartographer's tables that update without pressing E.**
 
 ## Contents
 
 - [Dungeon map](#dungeon-map)
 - [Zoom](#zoom)
 - [Trail](#trail)
+- [GPS](#gps)
+- [Auto pins](#auto-pins)
+- [Cartographer's table](#cartographers-table)
 - [Configuration](#configuration)
 - [Troubleshooting](#troubleshooting)
 
@@ -24,6 +27,22 @@ Zoom the corner map with **`]`** (in) and **`[`** (out), or hold **Ctrl** and us
 
 A trail of fading gold dots shows where you've been for the last **90 seconds**: the newest dots are bright and the oldest fade away. It works on the world map and in dungeons. Change how long it lasts and its colour in the config, or turn it off with `Trail / ShowTrail`.
 
+## GPS
+
+Open the big map, hover over any pin and press **G**. A readout appears at the top of the screen with the pin's name, **how far away it is**, an **arrow that points to it** (relative to where you're looking) and **when you'll get there**. The arrival time comes from how fast you've actually been moving over the last 20 seconds, so it adjusts as you run, walk, ride or sail, and shows `--` while you're standing still. It switches off when you arrive (within 8 m). Press **G** on the same pin, or on empty map, to clear it. Works with any pin, including portals from PortalHeim and marks from PingHeim.
+
+## Auto pins
+
+As you explore, things go on your map by themselves, with the game's own pin icons and saved with your map:
+- **Rune stones and Vegvisirs, dungeon entrances (crypts, caves) and other large structures** when you're within 40 m (`AutoPins / LocationRadius`).
+- **Ore deposits** (copper, tin, silver, obsidian, meteorite; change the list in `AutoPins / OreKeywords`) when you hit one, or stand within 6 m of one.
+
+A pin is never added if one is already close by, whether you placed it or MapHeim did. Each kind can be switched off in the config.
+
+## Cartographer's table
+
+Walk within 25 m of a cartographer's table and your map and the table's are merged, both ways, without using it. You see what others have added, and they see what you have. It swaps again every 2 minutes while you stay near. Change the range or the delay, or turn it off, under `CartographerTable` in the config.
+
 ## Configuration
 
 `BepInEx/config/mbaya.MapHeim.cfg`, or Gale's config editor:
@@ -33,6 +52,11 @@ A trail of fading gold dots shows where you've been for the last **90 seconds**:
 | Zoom | ZoomInKey / ZoomOutKey | `]` / `[` | |
 | Zoom | CtrlScrollZoom | true | Ctrl and the mouse wheel zoom the map |
 | Zoom | Zoom | 1 | The current zoom (saved) |
+| GPS | ShowGps / GpsKey / ArriveMeters | true / G / 8 | |
+| AutoPins | Enabled, Runestones, Dungeons, Structures, OreDeposits | true | Each kind can be switched off |
+| AutoPins | LocationRadius / DepositRadius | 40 / 6 | How close you must get (metres) |
+| AutoPins | OreKeywords | copper,tin,silver,obsidian,meteorite | Deposits whose name contains one of these |
+| CartographerTable | AutoSync / Range / Seconds | true / 25 / 120 | |
 | Trail | ShowTrail | true | |
 | Trail | Seconds | 90 | How long the trail lasts |
 | Trail | Color | gold | |

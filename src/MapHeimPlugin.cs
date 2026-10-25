@@ -11,7 +11,7 @@ namespace MapHeim
     {
         public const string Guid = "mbaya.MapHeim";
         public const string Name = "MapHeim";
-        public const string Version = "0.1.0";
+        public const string Version = "0.2.0";
 
         internal static ManualLogSource Log;
 
@@ -25,6 +25,20 @@ namespace MapHeim
         internal static ConfigEntry<bool> DungeonEnabled;
         internal static ConfigEntry<float> ViewFeet;
         internal static ConfigEntry<float> ShownMeters;
+        internal static ConfigEntry<bool> GpsEnabled;
+        internal static ConfigEntry<KeyCode> GpsKey;
+        internal static ConfigEntry<float> GpsArriveMeters;
+        internal static ConfigEntry<bool> AutoPinsEnabled;
+        internal static ConfigEntry<bool> PinRunestones;
+        internal static ConfigEntry<bool> PinDungeons;
+        internal static ConfigEntry<bool> PinStructures;
+        internal static ConfigEntry<bool> PinOre;
+        internal static ConfigEntry<float> LocationRadius;
+        internal static ConfigEntry<float> DepositRadius;
+        internal static ConfigEntry<string> OreKeywords;
+        internal static ConfigEntry<bool> TableSyncEnabled;
+        internal static ConfigEntry<float> TableRange;
+        internal static ConfigEntry<float> TableSeconds;
 
         private Harmony _harmony;
 
@@ -41,6 +55,21 @@ namespace MapHeim
             DungeonEnabled = Config.Bind("Dungeon", "DungeonMap", true, "Inside a dungeon, the minimap draws a plan of the walls you've seen instead of the world map.");
             ViewFeet = Config.Bind("Dungeon", "ViewFeet", 10f, new ConfigDescription("How far ahead of you the dungeon map reveals, in feet.", new AcceptableValueRange<float>(5f, 40f)));
             ShownMeters = Config.Bind("Dungeon", "ShownMeters", 40f, new ConfigDescription("How many metres across the dungeon map shows at zoom 1.", new AcceptableValueRange<float>(15f, 64f)));
+
+            GpsEnabled = Config.Bind("GPS", "ShowGps", true, "Show the GPS readout (name, distance, arrow and arrival time) for the pin you've chosen.");
+            GpsKey = Config.Bind("GPS", "GpsKey", KeyCode.G, "On the big map, hover a pin and press this to make it the GPS target (press it again to clear it).");
+            GpsArriveMeters = Config.Bind("GPS", "ArriveMeters", 8f, new ConfigDescription("The GPS switches off when you're this close.", new AcceptableValueRange<float>(2f, 50f)));
+            AutoPinsEnabled = Config.Bind("AutoPins", "Enabled", true, "Put things on the map as you find them.");
+            PinRunestones = Config.Bind("AutoPins", "Runestones", true, "Rune stones and Vegvisirs, when you get close.");
+            PinDungeons = Config.Bind("AutoPins", "Dungeons", true, "Dungeon entrances (crypts, caves and the like), when you get close.");
+            PinStructures = Config.Bind("AutoPins", "Structures", true, "Other large structures (ruins, camps, towers...), when you get close.");
+            PinOre = Config.Bind("AutoPins", "OreDeposits", true, "Ore deposits, when you hit one or stand close to it.");
+            LocationRadius = Config.Bind("AutoPins", "LocationRadius", 40f, new ConfigDescription("How close you must get to a rune stone, dungeon or structure, in metres.", new AcceptableValueRange<float>(10f, 150f)));
+            DepositRadius = Config.Bind("AutoPins", "DepositRadius", 6f, new ConfigDescription("How close you must get to an ore deposit, in metres (hitting one always counts).", new AcceptableValueRange<float>(2f, 40f)));
+            OreKeywords = Config.Bind("AutoPins", "OreKeywords", "copper,tin,silver,obsidian,meteorite", "Deposits whose name contains one of these are pinned (comma separated).");
+            TableSyncEnabled = Config.Bind("CartographerTable", "AutoSync", true, "Swap map data with a cartographer's table when you're near it, without using it.");
+            TableRange = Config.Bind("CartographerTable", "Range", 25f, new ConfigDescription("How close you must be, in metres.", new AcceptableValueRange<float>(5f, 100f)));
+            TableSeconds = Config.Bind("CartographerTable", "Seconds", 120f, new ConfigDescription("How often it swaps while you stay near the table.", new AcceptableValueRange<float>(20f, 1800f)));
 
             _harmony = new Harmony(Guid);
             _harmony.PatchAll(typeof(MapHeimPlugin).Assembly);
@@ -61,7 +90,12 @@ namespace MapHeim
             MapZoom.Tick(map);
             DungeonMap.Tick(player, map);
             Trail.Tick(player, map);
+            Gps.Tick(player, map);
+            AutoPins.Tick(player, map);
+            TableSync.Tick(player, map);
         }
+
+        private void OnGUI() => Gps.Draw();
 
         private void OnDestroy() => _harmony?.UnpatchSelf();
     }
