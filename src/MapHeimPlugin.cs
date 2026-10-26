@@ -11,7 +11,7 @@ namespace MapHeim
     {
         public const string Guid = "mbaya.MapHeim";
         public const string Name = "MapHeim";
-        public const string Version = "0.2.1";
+        public const string Version = "0.3.0";
 
         internal static ManualLogSource Log;
 
@@ -36,9 +36,6 @@ namespace MapHeim
         internal static ConfigEntry<float> LocationRadius;
         internal static ConfigEntry<float> DepositRadius;
         internal static ConfigEntry<string> OreKeywords;
-        internal static ConfigEntry<bool> TableSyncEnabled;
-        internal static ConfigEntry<float> TableRange;
-        internal static ConfigEntry<float> TableSeconds;
 
         private Harmony _harmony;
 
@@ -67,9 +64,6 @@ namespace MapHeim
             LocationRadius = Config.Bind("AutoPins", "LocationRadius", 40f, new ConfigDescription("How close you must get to a rune stone, dungeon or structure, in metres.", new AcceptableValueRange<float>(10f, 150f)));
             DepositRadius = Config.Bind("AutoPins", "DepositRadius", 6f, new ConfigDescription("How close you must get to an ore deposit, in metres (hitting one always counts).", new AcceptableValueRange<float>(2f, 40f)));
             OreKeywords = Config.Bind("AutoPins", "OreKeywords", "copper,tin,silver,obsidian,meteorite", "Deposits whose name contains one of these are pinned (comma separated).");
-            TableSyncEnabled = Config.Bind("CartographerTable", "AutoSync", true, "Swap map data with a cartographer's table when you're near it, without using it.");
-            TableRange = Config.Bind("CartographerTable", "Range", 25f, new ConfigDescription("How close you must be, in metres.", new AcceptableValueRange<float>(5f, 100f)));
-            TableSeconds = Config.Bind("CartographerTable", "Seconds", 120f, new ConfigDescription("How often it swaps while you stay near the table.", new AcceptableValueRange<float>(20f, 1800f)));
 
             _harmony = new Harmony(Guid);
             SafePatch.All(_harmony, typeof(MapHeimPlugin).Assembly, Log);
@@ -78,6 +72,7 @@ namespace MapHeim
 
         private void Update()
         {
+            TableRepair.Tick();
             var player = Player.m_localPlayer;
             var map = Minimap.instance;
             if (player == null || map == null)
@@ -92,7 +87,6 @@ namespace MapHeim
             Trail.Tick(player, map);
             Gps.Tick(player, map);
             AutoPins.Tick(player, map);
-            TableSync.Tick(player, map);
         }
 
         private void OnGUI() => Gps.Draw();

@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.3.0
+- **Fixed: players being dropped when they join.** 0.2.0 and 0.2.1 wrote a whole uncompressed map (about 4 MB) into cartographer's tables. A table that big can't be sent to a joining player, so the connection fails after about 45 seconds. **Whoever hosts the world now empties any table holding that much data** (the log says `A cartographer's table ... Emptying it`). The map stored on that table is lost; your own map is not touched.
+- **Removed: cartographer's table auto-sync.** It was the cause. It may come back later, done safely. Everyone playing in the world should update to 0.3.0, because an older version can fill a table again.
+
 ## 0.2.1
 - Each patch is now applied on its own, so one the game has changed can't stop the others (the log names the one that failed).
 

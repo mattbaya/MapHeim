@@ -1,6 +1,6 @@
 # MapHeim
 
-**Upgrades for your map: a plan of the dungeon you're in, zoom, a trail of where you've just been, a GPS with arrival time, pins that add themselves, and cartographer's tables that update without pressing E.**
+**Upgrades for your map: a plan of the dungeon you're in, zoom, a trail of where you've just been, a GPS with arrival time, pins that add themselves, and a repair for oversized cartographer's tables.**
 
 ## Contents
 
@@ -9,7 +9,7 @@
 - [Trail](#trail)
 - [GPS](#gps)
 - [Auto pins](#auto-pins)
-- [Cartographer's table](#cartographers-table)
+- [Cartographer's table repair](#cartographers-table-repair)
 - [Configuration](#configuration)
 - [Troubleshooting](#troubleshooting)
 
@@ -39,9 +39,9 @@ As you explore, things go on your map by themselves, with the game's own pin ico
 
 A pin is never added if one is already close by, whether you placed it or MapHeim did. Each kind can be switched off in the config.
 
-## Cartographer's table
+## Cartographer's table repair
 
-Walk within 25 m of a cartographer's table and your map and the table's are merged, both ways, without using it. You see what others have added, and they see what you have. It swaps again every 2 minutes while you stay near. Change the range or the delay, or turn it off, under `CartographerTable` in the config.
+Versions 0.2.0 and 0.2.1 had a feature that kept your map in step with a nearby cartographer's table. It wrote far too much data into the table (about 4 MB), which made it impossible for the world's host to send that table to a joining player, so players were dropped a minute after joining. That feature is gone. **Whoever hosts the world empties any table holding that much data** when the world loads (the log says so), so after everyone updates to 0.3.0 joining works again. The map stored on an emptied table is lost (your own map isn't touched). Everyone in the world should update, because an older MapHeim can fill a table again.
 
 ## Configuration
 
@@ -56,7 +56,6 @@ Walk within 25 m of a cartographer's table and your map and the table's are merg
 | AutoPins | Enabled, Runestones, Dungeons, Structures, OreDeposits | true | Each kind can be switched off |
 | AutoPins | LocationRadius / DepositRadius | 40 / 6 | How close you must get (metres) |
 | AutoPins | OreKeywords | copper,tin,silver,obsidian,meteorite | Deposits whose name contains one of these |
-| CartographerTable | AutoSync / Range / Seconds | true / 25 / 120 | |
 | Trail | ShowTrail | true | |
 | Trail | Seconds | 90 | How long the trail lasts |
 | Trail | Color | gold | |
