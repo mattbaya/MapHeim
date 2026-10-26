@@ -1,7 +1,7 @@
 {
   "name": "MapHeim",
   "author": "Svaha",
-  "version_number": "0.2.0",
+  "version_number": "0.2.1",
   "website_url": "https://github.com/mattbaya/MapHeim",
   "description": "Corner-map upgrades: a dungeon plan that grows as you explore, zoom, a 90-second trail, a GPS with distance and ETA, pins added as you find rune stones, dungeons and ore, and auto-sync with cartographer's tables.",
   "dependencies": [

@@ -11,7 +11,7 @@ namespace MapHeim
     {
         public const string Guid = "mbaya.MapHeim";
         public const string Name = "MapHeim";
-        public const string Version = "0.2.0";
+        public const string Version = "0.2.1";
 
         internal static ManualLogSource Log;
 
@@ -72,7 +72,7 @@ namespace MapHeim
             TableSeconds = Config.Bind("CartographerTable", "Seconds", 120f, new ConfigDescription("How often it swaps while you stay near the table.", new AcceptableValueRange<float>(20f, 1800f)));
 
             _harmony = new Harmony(Guid);
-            _harmony.PatchAll(typeof(MapHeimPlugin).Assembly);
+            SafePatch.All(_harmony, typeof(MapHeimPlugin).Assembly, Log);
             Log.LogInfo($"{Name} {Version} loaded");
         }
 
