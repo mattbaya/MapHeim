@@ -25,7 +25,7 @@ Zoom the corner map with **`]`** (in) and **`[`** (out), or hold **Ctrl** and us
 
 ## Trail
 
-A trail of fading gold dots shows where you've been for the last **90 seconds**: the newest dots are bright and the oldest fade away. It shows on both the corner map and the big map (the dots are small map pins), and inside a dungeon it's drawn on the dungeon plan. Change how long it lasts and its colour in the config, or turn it off with `Trail / ShowTrail`.
+A thin gold line behind you shows where you've been for the last **90 seconds**; the newest part is bright and the old end fades away. It shows on the corner map and on the big map, and inside a dungeon it's drawn on the dungeon plan. Change how long it lasts and its colour in the config, or turn it off with `Trail / ShowTrail`.
 
 ## GPS
 
@@ -58,6 +58,7 @@ Versions 0.2.0 and 0.2.1 had a feature that kept your map in step with a nearby 
 | AutoPins | OreKeywords | copper,tin,silver,obsidian,meteorite | Deposits whose name contains one of these |
 | Trail | ShowTrail | true | |
 | Trail | Seconds | 90 | How long the trail lasts |
+| Trail | Width | 2 | How thick the line is (pixels) |
 | Trail | Color | gold | |
 | Dungeon | DungeonMap | true | |
 | Dungeon | ViewFeet | 10 | How far ahead the plan reveals |

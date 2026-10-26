@@ -11,7 +11,7 @@ namespace MapHeim
     {
         public const string Guid = "mbaya.MapHeim";
         public const string Name = "MapHeim";
-        public const string Version = "0.3.1";
+        public const string Version = "0.3.2";
 
         internal static ManualLogSource Log;
 
@@ -22,6 +22,7 @@ namespace MapHeim
         internal static ConfigEntry<bool> TrailEnabled;
         internal static ConfigEntry<float> TrailSeconds;
         internal static ConfigEntry<Color> TrailColor;
+        internal static ConfigEntry<float> TrailWidth;
         internal static ConfigEntry<bool> DungeonEnabled;
         internal static ConfigEntry<float> ViewFeet;
         internal static ConfigEntry<float> ShownMeters;
@@ -49,6 +50,7 @@ namespace MapHeim
             TrailEnabled = Config.Bind("Trail", "ShowTrail", true, "Show a trail of dots behind you on the minimap, where you've just been.");
             TrailSeconds = Config.Bind("Trail", "Seconds", 90f, new ConfigDescription("How long the trail lasts.", new AcceptableValueRange<float>(10f, 600f)));
             TrailColor = Config.Bind("Trail", "Color", new Color(1f, 0.82f, 0.25f), "The trail's colour (the oldest dots fade away).");
+            TrailWidth = Config.Bind("Trail", "Width", 2f, new ConfigDescription("How thick the trail line is, in pixels.", new AcceptableValueRange<float>(1f, 8f)));
             DungeonEnabled = Config.Bind("Dungeon", "DungeonMap", true, "Inside a dungeon, the minimap draws a plan of the walls you've seen instead of the world map.");
             ViewFeet = Config.Bind("Dungeon", "ViewFeet", 10f, new ConfigDescription("How far ahead of you the dungeon map reveals, in feet.", new AcceptableValueRange<float>(5f, 40f)));
             ShownMeters = Config.Bind("Dungeon", "ShownMeters", 40f, new ConfigDescription("How many metres across the dungeon map shows at zoom 1.", new AcceptableValueRange<float>(15f, 64f)));

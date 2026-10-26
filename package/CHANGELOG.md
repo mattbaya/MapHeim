@@ -1,5 +1,8 @@
 # Changelog
 
+## 0.3.2
+- **The trail is a thin line again, and it now shows on the big map too.** It's drawn as a 2-pixel line behind you that fades toward its old end (`Trail / Width` makes it thicker), on the corner map, the big map and the dungeon plan. This replaces the map pins from 0.3.1.
+
 ## 0.3.1
 - **Fixed: the trail wasn't visible.** It's now made of small map pins that fade as they age (90 seconds by default), so it shows on both the corner map and the big map and follows the map exactly. Inside a dungeon it's still drawn on the dungeon plan.
 
