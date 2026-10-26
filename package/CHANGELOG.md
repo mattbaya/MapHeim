@@ -1,5 +1,8 @@
 # Changelog
 
+## 0.3.1
+- **Fixed: the trail wasn't visible.** It's now made of small map pins that fade as they age (90 seconds by default), so it shows on both the corner map and the big map and follows the map exactly. Inside a dungeon it's still drawn on the dungeon plan.
+
 ## 0.3.0
 - **Fixed: players being dropped when they join.** 0.2.0 and 0.2.1 wrote a whole uncompressed map (about 4 MB) into cartographer's tables. A table that big can't be sent to a joining player, so the connection fails after about 45 seconds. **Whoever hosts the world now empties any table holding that much data** (the log says `A cartographer's table ... Emptying it`). The map stored on that table is lost; your own map is not touched.
 - **Removed: cartographer's table auto-sync.** It was the cause. It may come back later, done safely. Everyone playing in the world should update to 0.3.0, because an older version can fill a table again.

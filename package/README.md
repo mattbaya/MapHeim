@@ -25,7 +25,7 @@ Zoom the corner map with **`]`** (in) and **`[`** (out), or hold **Ctrl** and us
 
 ## Trail
 
-A trail of fading gold dots shows where you've been for the last **90 seconds**: the newest dots are bright and the oldest fade away. It works on the world map and in dungeons. Change how long it lasts and its colour in the config, or turn it off with `Trail / ShowTrail`.
+A trail of fading gold dots shows where you've been for the last **90 seconds**: the newest dots are bright and the oldest fade away. It shows on both the corner map and the big map (the dots are small map pins), and inside a dungeon it's drawn on the dungeon plan. Change how long it lasts and its colour in the config, or turn it off with `Trail / ShowTrail`.
 
 ## GPS
 

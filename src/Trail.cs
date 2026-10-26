@@ -20,12 +20,135 @@ namespace MapHeim
 
         public static void Clear()
         {
+            ClearPins(Minimap.instance);
             Points.Clear();
             foreach (var dot in Dots)
                 if (dot != null) dot.gameObject.SetActive(false);
         }
 
+        // ---------------------------------------------------------------- on the world map: pins
+
+        private class Mark { public Minimap.PinData Pin; public Vector3 Position; public float Time; public int Stage = -1; }
+
+        private static readonly List<Mark> Marks = new List<Mark>();
+        private static readonly Sprite[] Stages = new Sprite[4];
+        private static readonly float[] StageAlpha = { 1f, 0.7f, 0.45f, 0.25f };
+        private static Minimap _pinsOn;
+        private static float _nextMark;
+
+        private static void ClearPins(Minimap map)
+        {
+            if (map != null)
+                foreach (var mark in Marks)
+                    if (mark.Pin != null) map.RemovePin(mark.Pin);
+            Marks.Clear();
+            if (map != null) map.m_pinUpdateRequired = true;
+        }
+
+        private static Sprite StageSprite(int stage)
+        {
+            if (Stages[stage] != null) return Stages[stage];
+            const int size = 48;
+            var c = MapHeimPlugin.TrailColor.Value;
+            var pixels = new Color32[size * size];
+            for (int y = 0; y < size; y++)
+                for (int x = 0; x < size; x++)
+                {
+                    float dx = x + 0.5f - size / 2f, dy = y + 0.5f - size / 2f;
+                    float d = Mathf.Sqrt(dx * dx + dy * dy);
+                    float edge = Mathf.Clamp01(8.5f - d);           // a soft-edged dot about 17 px across
+                    float rim = Mathf.Clamp01(10f - d) * 0.5f;      // with a faint dark rim so it shows on any map colour
+                    var color = Color.Lerp(new Color(0f, 0f, 0f, rim * StageAlpha[stage]), new Color(c.r, c.g, c.b, StageAlpha[stage]), edge);
+                    color.a = Mathf.Max(edge * StageAlpha[stage], rim * StageAlpha[stage]);
+                    pixels[y * size + x] = color;
+                }
+
+            var texture = new Texture2D(size, size, TextureFormat.RGBA32, false) { name = "MapHeimTrail" + stage, filterMode = FilterMode.Bilinear, wrapMode = TextureWrapMode.Clamp };
+            texture.SetPixelData(pixels, 0);
+            texture.Apply(false, true);
+            texture.hideFlags |= HideFlags.DontUnloadUnusedAsset;
+            var sprite = Sprite.Create(texture, new Rect(0, 0, size, size), new Vector2(0.5f, 0.5f), 100f);
+            sprite.hideFlags |= HideFlags.DontUnloadUnusedAsset;
+            return Stages[stage] = sprite;
+        }
+
+        /// <summary>The trail on the world map (small and big) as little map pins that fade as they age.</summary>
+        private static void TickPins(Player player, Minimap map)
+        {
+            if (map != _pinsOn)
+            {
+                // A different map (a world was loaded or left): the old pins went with it.
+                Marks.Clear();
+                _pinsOn = map;
+            }
+
+            float now = Time.time;
+            float life = MapHeimPlugin.TrailSeconds.Value;
+            bool changed = false;
+
+            if (now >= _nextMark)
+            {
+                _nextMark = now + 1f;
+                var position = player.transform.position;
+                if (Marks.Count == 0 || (Marks[Marks.Count - 1].Position - position).sqrMagnitude > 2.25f)
+                {
+                    var pin = map.AddPin(position, Minimap.PinType.Icon3, "", false, false);
+                    Marks.Add(new Mark { Pin = pin, Position = position, Time = now });
+                    changed = true;
+                }
+            }
+
+            for (int i = Marks.Count - 1; i >= 0; i--)
+            {
+                var mark = Marks[i];
+                float age = (now - mark.Time) / life;
+                if (age >= 1f)
+                {
+                    map.RemovePin(mark.Pin);
+                    Marks.RemoveAt(i);
+                    changed = true;
+                    continue;
+                }
+
+                int stage = Mathf.Min(Stages.Length - 1, (int)(age * Stages.Length));
+                if (stage != mark.Stage)
+                {
+                    mark.Stage = stage;
+                    mark.Pin.m_icon = StageSprite(stage);
+                    changed = true;
+                }
+            }
+
+            if (changed) map.m_pinUpdateRequired = true;
+        }
+
+        // ---------------------------------------------------------------- the main entry
+
         public static void Tick(Player player, Minimap map)
+        {
+            if (!MapHeimPlugin.TrailEnabled.Value)
+            {
+                Clear();
+                return;
+            }
+
+            if (DungeonMap.Showing)
+            {
+                // Inside a dungeon the world map is replaced by the plan, so the trail is drawn on that instead.
+                ClearPins(map);
+                TickDots(player, map);
+                return;
+            }
+
+            foreach (var dot in Dots)
+                if (dot != null && dot.gameObject.activeSelf) dot.gameObject.SetActive(false);
+            Points.Clear();
+            TickPins(player, map);
+        }
+
+        // ---------------------------------------------------------------- inside a dungeon: dots on the plan
+
+        private static void TickDots(Player player, Minimap map)
         {
             if (!MapHeimPlugin.TrailEnabled.Value)
             {
@@ -54,7 +177,7 @@ namespace MapHeim
 
             EnsureHolder(area);
             // How many pixels a metre is on the map as it's drawn now.
-            float metersAcross = DungeonMap.Showing ? DungeonMap.MetersAcross : map.m_mapImageSmall.uvRect.width * map.m_textureSize * map.m_pixelSize;
+            float metersAcross = DungeonMap.Showing ? DungeonMap.MetersAcross : map.m_smallZoom * map.m_textureSize * map.m_pixelSize;
             float pixelsPerMeter = area.rect.width / Mathf.Max(0.01f, metersAcross);
             var origin = player.transform.position;
             var color = MapHeimPlugin.TrailColor.Value;
